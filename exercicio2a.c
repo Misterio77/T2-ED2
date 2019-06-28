@@ -98,10 +98,12 @@ hash *criar_hash (unsigned N) {
 
 //Insere uma chave em uma tabela hash, utilizando parametro e funcao hash dados. Retorna o numero de colisoes
 unsigned inserir_hash (hash *in, string chave, unsigned (*func)(unsigned, unsigned, unsigned), int B) {
-	//Variavel para manter conta de quantas colisoes tivemos
-	unsigned colisoes = 0;
 	//Efetua o hash na chave, guardando o numero
 	unsigned indice = func(converter(chave), 0, B);
+	//Pegamos o resto da divisao pelo tamanho da tabela, para garantir que nao saimos dela
+	indice = indice % in->tam;
+	//Variavel para manter conta de quantas colisoes tivemos
+	unsigned colisoes = 0;
 	
 	//Enquanto nao encontrarmos uma posicao vazia
 	while (strcmp(in->vet[indice], "")) {

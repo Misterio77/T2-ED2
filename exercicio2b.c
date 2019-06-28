@@ -100,18 +100,29 @@ hash *criar_hash (unsigned N) {
 
 //Insere uma chave em uma tabela hash, utilizando parametro dado. Retorna o numero de colisoes
 unsigned inserir_hash (hash *in, string chave, int B) {
-	unsigned colisoes = 0;
-	unsigned num_chave = converter(chave);
-	unsigned indice = (h_mul(num_chave, 0, B))%B;
+	unsigned indice, colisoes = 0;
 	//repetir até encontrarmos uma posicao vazia
 	for (unsigned cont = 0; !(strcmp(in->vet[indice], "")); cont++) {
-		colisoes++; //Adicionar colisao
-		//Rehash
-		indice = (h_mul(num_chave, 0, B) + cont * h_div(num_chave, 0, B))%B;
-		//Evitar numeros fora do tamanho da tabela
-		indice = indice % in->tam;
+		indice = (h_mul())
 	}
 
+
+
+
+	//Efetua o hash na chave, guardando o numero
+	unsigned indice = func(converter(chave), 0, B);
+	//Pegamos o resto da divisao pelo tamanho da tabela, para garantir que nao saimos dela
+	indice = indice % in->tam;
+	//Variavel para manter conta de quantas colisoes tivemos
+	unsigned colisoes = 0;
+	
+	//Enquanto nao encontrarmos uma posicao vazia
+	while (strcmp(in->vet[indice], "")) {
+		colisoes++;				//Uma colisao nova
+		indice++;				  //Overflow
+		indice = indice % in->tam; //Caso ultrapasse o tamanho
+	}
+	
 	//Copiar a chave na posicao do vetor
 	strcpy(in->vet[indice], chave);
 	//Retornar o numero de colisoes
@@ -120,20 +131,21 @@ unsigned inserir_hash (hash *in, string chave, int B) {
 
 //Busca uma chave em uma tabela hash, utilizando parametro dado. Retorna TRUE caso encontre, FALSE caso contrario.
 bool busca_hash (hash *in, string chave, int B) {
-	unsigned indice = (h_mul(num_chave, 0, B))%B;
+	//Efetua o hash na chave, guardando o numero
+	unsigned indice = func(converter(chave), 0, B);
+	//Pegamos o resto da divisao pelo tamanho da tabela, para garantir que nao saimos dela
+	indice = indice % in->tam;
+	//Vamos guardar o indice inicial, para comparar mais tarde
 	unsigned indice_inicial = indice;
-
+	
 	do {
+		//Caso a posicao atual seja a chave buscada (Negamos pois strcmp retorna 0 em caso positivo)
 		if (!(strcmp(in->vet[indice], chave))) {
-                        //Encontramos
-                        return (TRUE);
-                }
-		//Rehash
-                indice = (h_mul(num_chave, 0, B) + cont * h_div(num_chave, 0, B))%B;
-		//Evitar numeros fora do tamanho da tabela
-                indice = indice % in->tam;
-
-
+			//Encontramos
+			return (TRUE);
+		}
+		indice++; //Overflow
+		indice = indice % in->tam; //Caso ultrapasse o tamanho
 	} while (indice_inicial != indice); //Continuar buscando até chegar no indice que começamos, nesse caso o elemento nao existe
 	
 	//Não encontramos
