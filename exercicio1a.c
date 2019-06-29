@@ -1,3 +1,12 @@
+/*
+SCC0224 - Estrutura de Dados 2
+Projeto 2 - Exercício 1
+06/2019
+
+Gabriel Silva Fontes		10856803
+Rafaela Delgado Nascimento  10818904
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -9,15 +18,6 @@ clock_t _ini, _fim;
 unsigned char typedef bool;
 #define TRUE  1
 #define FALSE 0
-
-
-bool busca_sequencial(int *vet, int tam, int chave) {
-	for (int cont = 0; cont < tam; cont++)
-		if (vet[cont] == chave) //Caso encontre
-			return (TRUE);
-	
-	return (FALSE);
-}
 
 int* ler_inteiros(const char * arquivo, const int n)
 {
@@ -43,6 +43,17 @@ double finaliza_tempo()
 {
 	_fim = clock();
 	return ((double) (_fim - _ini)) / CLOCKS_PER_SEC;
+}
+
+
+
+//Busca sequencial
+bool busca_sequencial(int *vet, int tam, int chave) {
+	for (int cont = 0; cont < tam; cont++)
+		if (vet[cont] == chave) //Caso encontre
+			return (TRUE);
+	
+	return (FALSE);
 }
 
 int main(int argc, char const *argv[])

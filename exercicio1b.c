@@ -1,3 +1,12 @@
+/*
+SCC0224 - Estrutura de Dados 2
+Projeto 2 - Exercício 1
+06/2019
+
+Gabriel Silva Fontes		10856803
+Rafaela Delgado Nascimento  10818904
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -15,16 +24,6 @@ void troca(int *a, int *b) {
 	aux = *a;
 	*a = *b;
 	*b = aux;
-}
-
-bool busca_sequencial_mpf(int *vet, int tam, int chave) {
-	for (int cont = 0; cont < tam; cont++) {
-		if (vet[cont] == chave) {//Caso encontre
-			if (cont != 0) troca(&vet[cont], &vet[0]);
-			return (TRUE);	
-		}
-	}
-	return (FALSE);
 }
 
 int* ler_inteiros(const char * arquivo, const int n)
@@ -51,6 +50,19 @@ double finaliza_tempo()
 {
 	_fim = clock();
 	return ((double) (_fim - _ini)) / CLOCKS_PER_SEC;
+}
+
+
+
+//Busca sequencial com mover para frente
+bool busca_sequencial_mpf(int *vet, int tam, int chave) {
+	for (int cont = 0; cont < tam; cont++) {
+		if (vet[cont] == chave) {//Caso encontre
+			if (cont != 0) troca(&vet[cont], &vet[0]);
+			return (TRUE);	
+		}
+	}
+	return (FALSE);
 }
 
 int main(int argc, char const *argv[])

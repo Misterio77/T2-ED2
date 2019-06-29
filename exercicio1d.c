@@ -1,10 +1,15 @@
+/*
+SCC0224 - Estrutura de Dados 2
+Projeto 2 - Exercício 1
+06/2019
+
+Gabriel Silva Fontes		10856803
+Rafaela Delgado Nascimento  10818904
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-int comparar (const void * a, const void * b) {
-   return ( *(int*)a - *(int*)b );
-}
 
 // Definição das variaveis que controlam a medição de tempo
 clock_t _ini, _fim;
@@ -14,10 +19,42 @@ unsigned char typedef bool;
 #define TRUE  1
 #define FALSE 0
 
+int* ler_inteiros(const char * arquivo, const int n)
+{
+	FILE* f = fopen(arquivo, "r");
+
+	int * inteiros = (int *) malloc(sizeof(int) * n);
+
+	for (int i = 0; !feof(f); i++)
+		fscanf(f, "%d\n", &inteiros[i]);
+
+	fclose(f);
+
+	return inteiros;
+}
+
+void inicia_tempo()
+{
+	srand(time(NULL));
+	_ini = clock();
+}
+
+double finaliza_tempo()
+{
+	_fim = clock();
+	return ((double) (_fim - _ini)) / CLOCKS_PER_SEC;
+}
+
+
+
 typedef struct _indice {
 	int *ind;
 	int tam;
 } indice;
+
+int comparar (const void * a, const void * b) {
+   return ( *(int*)a - *(int*)b );
+}
 
 //Indexa o vetor dado (Só funciona com vetores completos com todos e sem repeticao)
 indice *indexar(int *vet, int N, int S) {
@@ -53,31 +90,6 @@ bool busca_sequencial_indexada(int *vet, int tam, indice *i, int chave) {
 
 }
 
-int* ler_inteiros(const char * arquivo, const int n)
-{
-	FILE* f = fopen(arquivo, "r");
-
-	int * inteiros = (int *) malloc(sizeof(int) * n);
-
-	for (int i = 0; !feof(f); i++)
-		fscanf(f, "%d\n", &inteiros[i]);
-
-	fclose(f);
-
-	return inteiros;
-}
-
-void inicia_tempo()
-{
-	srand(time(NULL));
-	_ini = clock();
-}
-
-double finaliza_tempo()
-{
-	_fim = clock();
-	return ((double) (_fim - _ini)) / CLOCKS_PER_SEC;
-}
 
 int main(int argc, char const *argv[])
 {

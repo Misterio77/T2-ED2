@@ -100,54 +100,34 @@ hash *criar_hash (unsigned N) {
 
 //Insere uma chave em uma tabela hash, utilizando parametro dado. Retorna o numero de colisoes
 unsigned inserir_hash (hash *in, string chave, int B) {
-	unsigned indice, colisoes = 0;
-	//repetir até encontrarmos uma posicao vazia
-	for (unsigned cont = 0; !(strcmp(in->vet[indice], "")); cont++) {
-		indice = (h_mul())
-	}
-
-
-
-
-	//Efetua o hash na chave, guardando o numero
-	unsigned indice = func(converter(chave), 0, B);
-	//Pegamos o resto da divisao pelo tamanho da tabela, para garantir que nao saimos dela
-	indice = indice % in->tam;
-	//Variavel para manter conta de quantas colisoes tivemos
-	unsigned colisoes = 0;
+	unsigned chave_num = converter(chave);
+	unsigned indice, cont;
 	
-	//Enquanto nao encontrarmos uma posicao vazia
-	while (strcmp(in->vet[indice], "")) {
-		colisoes++;				//Uma colisao nova
-		indice++;				  //Overflow
-		indice = indice % in->tam; //Caso ultrapasse o tamanho
+	for (cont = 0; cont < in->tam; cont++) {
+		indice = (h_mul(chave_num, cont, B) + cont * h_div(chave_num, cont, B)) % B;
+		if (strcmp(in->vet[indice], "") == 0) {
+			break;
+		}	
 	}
 	
 	//Copiar a chave na posicao do vetor
 	strcpy(in->vet[indice], chave);
 	//Retornar o numero de colisoes
-	return(colisoes);
+	return(cont);
 }
 
 //Busca uma chave em uma tabela hash, utilizando parametro dado. Retorna TRUE caso encontre, FALSE caso contrario.
 bool busca_hash (hash *in, string chave, int B) {
-	//Efetua o hash na chave, guardando o numero
-	unsigned indice = func(converter(chave), 0, B);
-	//Pegamos o resto da divisao pelo tamanho da tabela, para garantir que nao saimos dela
-	indice = indice % in->tam;
-	//Vamos guardar o indice inicial, para comparar mais tarde
-	unsigned indice_inicial = indice;
+	unsigned chave_num = converter(chave);
+	unsigned indice;
 	
-	do {
-		//Caso a posicao atual seja a chave buscada (Negamos pois strcmp retorna 0 em caso positivo)
-		if (!(strcmp(in->vet[indice], chave))) {
-			//Encontramos
-			return (TRUE);
+	for (unsigned cont = 0; cont < in->tam; cont++) {
+		indice = (h_mul(chave_num, cont, B) + cont * h_div(chave_num, cont, B)) % B;
+		if (strcmp(in->vet[indice], "") == 0) break;
+		if (strcmp(in->vet[indice], chave) == 0) {
+			return(TRUE);
 		}
-		indice++; //Overflow
-		indice = indice % in->tam; //Caso ultrapasse o tamanho
-	} while (indice_inicial != indice); //Continuar buscando até chegar no indice que começamos, nesse caso o elemento nao existe
-	
+	}	
 	//Não encontramos
 	return(FALSE);
 }
@@ -178,32 +158,34 @@ int main(int argc, char const *argv[])
 	string* consultas = ler_strings("strings_busca.txt", M);
 
 
-	// cria tabela hash com hash por hash duplo
+	hash *tabela = criar_hash(B); // cria tabela hash com hash por hash duplo
 
 	// inserção dos dados na tabela hash
 	inicia_tempo();
 	for (int i = 0; i < N; i++) {
-		// inserir insercoes[i] na tabela hash
+		colisoes += inserir_hash(tabela, insercoes[i], B); // inserir insercoes[i] na tabela hash
 	}
 	double tempo_insercao = finaliza_tempo();
 
 	// busca dos dados na tabela hash
 	inicia_tempo();
 	for (int i = 0; i < M; i++) {
-		// buscar consultas[i] na tabela hash
+		encontrados += busca_hash(tabela, consultas[i], B);// buscar consultas[i] na tabela hash
 	}
 	double tempo_busca = finaliza_tempo();
 
 
+	limpa_hash(tabela);
+	
 	printf("Colisões na inserção: %d\n", colisoes);
 	printf("Tempo de inserção   : %fs\n", tempo_insercao);
 	printf("Tempo de busca	  : %fs\n", tempo_busca);
 	printf("Itens encontrados   : %d\n", encontrados);
 
 	//Já que as consultas e inserções foram alocadas com malloc, temos que desalocar também.
-	for (unsigned cont = 0; cont < N; cont++) free(insercoes[cont]);
+	for (int cont = 0; cont < N; cont++) free(insercoes[cont]);
 	free(insercoes);
-	for (unsigned cont = 0; cont < M; cont++) free(consultas[cont]);
+	for (int cont = 0; cont < M; cont++) free(consultas[cont]);
 	free(consultas);
 
 

@@ -98,45 +98,34 @@ hash *criar_hash (unsigned N) {
 
 //Insere uma chave em uma tabela hash, utilizando parametro e funcao hash dados. Retorna o numero de colisoes
 unsigned inserir_hash (hash *in, string chave, unsigned (*func)(unsigned, unsigned, unsigned), int B) {
-	//Efetua o hash na chave, guardando o numero
-	unsigned indice = func(converter(chave), 0, B);
-	//Pegamos o resto da divisao pelo tamanho da tabela, para garantir que nao saimos dela
-	indice = indice % in->tam;
-	//Variavel para manter conta de quantas colisoes tivemos
-	unsigned colisoes = 0;
+	unsigned chave_num = converter(chave);
+	unsigned indice, cont;
 	
-	//Enquanto nao encontrarmos uma posicao vazia
-	while (strcmp(in->vet[indice], "")) {
-		colisoes++;                //Uma colisao nova
-		indice++;                  //Overflow
-		indice = indice % in->tam; //Caso ultrapasse o tamanho
+	for (cont = 0; cont < in->tam; cont++) {
+		indice = func(chave_num, cont, B);
+		if (strcmp(in->vet[indice], "") == 0) {
+			break;
+		}	
 	}
 	
 	//Copiar a chave na posicao do vetor
 	strcpy(in->vet[indice], chave);
 	//Retornar o numero de colisoes
-	return(colisoes);
+	return(cont);
 }
 
 //Busca uma chave em uma tabela hash, utilizando parametro e funcao hash dada. Retorna TRUE caso encontre, FALSE caso contrario.
 bool busca_hash (hash *in, string chave, unsigned (*func)(unsigned, unsigned, unsigned), int B) {
-	//Efetua o hash na chave, guardando o numero
-	unsigned indice = func(converter(chave), 0, B);
-	//Pegamos o resto da divisao pelo tamanho da tabela, para garantir que nao saimos dela
-	indice = indice % in->tam;
-	//Vamos guardar o indice inicial, para comparar mais tarde
-	unsigned indice_inicial = indice;
+	unsigned chave_num = converter(chave);
+	unsigned indice;
 	
-	do {
-		//Caso a posicao atual seja a chave buscada (Negamos pois strcmp retorna 0 em caso positivo)
-		if (!(strcmp(in->vet[indice], chave))) {
-			//Encontramos
-			return (TRUE);
+	for (unsigned cont = 0; cont < in->tam; cont++) {
+		indice = func(chave_num, cont, B);
+		if (strcmp(in->vet[indice], "") == 0) break;
+		if (strcmp(in->vet[indice], chave) == 0) {
+			return(TRUE);
 		}
-		indice++; //Overflow
-		indice = indice % in->tam; //Caso ultrapasse o tamanho
-	} while (indice_inicial != indice); //Continuar buscando até chegar no indice que começamos, nesse caso o elemento nao existe
-	
+	}	
 	//Não encontramos
 	return(FALSE);
 }
@@ -170,7 +159,7 @@ int main(int argc, char const *argv[])
 	string* consultas = ler_strings("strings_busca.txt", M);
 
 
-	hash *tabela_div = criar_hash(N);// cria tabela hash com hash por divisão
+	hash *tabela_div = criar_hash(B);// cria tabela hash com hash por divisão
 
 	// inserção dos dados na tabela hash usando hash por divisão
 	inicia_tempo();
@@ -189,7 +178,7 @@ int main(int argc, char const *argv[])
 	limpa_hash(tabela_div); // limpa a tabela hash com hash por divisão
 
 
-	hash *tabela_mul = criar_hash(N); // cria tabela hash com hash por divisão
+	hash *tabela_mul = criar_hash(B); // cria tabela hash com hash por divisão
 
 	// inserção dos dados na tabela hash usando hash por multiplicação
 	inicia_tempo();
